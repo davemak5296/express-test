@@ -1,8 +1,14 @@
 extends layout
 
+include components
+
 block content
-  h1(class='bg-slate-300 text-lime-500 font-bold') #{title}
-  p(class='text-gray-500') Welcome to #{title}
-  p(class='text-red-500') Welcome to #{title}
-  p(class='text-blue-500') Welcome to #{title}
-  p(class='text-slate-500') Welcome to #{title}
+    +warning()
+    main(class='bg-white w-[700px] max-w-full mx-auto my-5 p-5 rounded shadow-[1px_1px_3px_rgba(232,232,232,1)]')
+        +btn('a', '註冊')
+        span  
+        +btn('a', '登入')
+        +h3("你好！")
+        +h1("Comments")
+        +h3("請登入以發表留言")
+        +hr()

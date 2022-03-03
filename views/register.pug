@@ -1,0 +1,18 @@
+extends layout
+include components
+block content
+    +warning()
+    main(class='bg-white w-[700px] max-w-full mx-auto my-5 p-5 rounded shadow-[1px_1px_3px_rgba(232,232,232,1)]')
+        +btn('a', '回留言板')
+        span  
+        +btn('a', '登入')
+        +h1("註冊帳號")
+        form(class='w-full p-2.5 border border-solid border-sky-200' method='POST' action='/register/auth')
+            div(class='text-blue-700')= isfilled
+            div(class='text-red-700')= msg
+            +form-input("姓名: ", 'text', 'name')
+            +form-input("暱稱: ", 'text', 'nickname')
+            +form-input("帳號: ", 'text', 'username')
+            +form-input("密碼: ", 'password', 'password')
+            +form-input("重新輸入密碼: ", 'password_re', 'password_re')
+            +btn('input')
