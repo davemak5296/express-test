@@ -1,29 +1,33 @@
 var express = require('express');
 var router = express.Router();
+const session = require('express-session');
+
+router.use(session({
+    secret: 'secret',
+    resave: false,
+    saveUninitialized: false
+}))
 /* GET users listing. */
+
 router.get('/', function (req, res, next) {
-    res.render('register')
+    // render register.pug according to value of req.session.fill
+    if (req.session.fill == undefined ) {  // 
+        res.render('register');
+    } else if (req.session.fill) {
+        req.session.fill = undefined;
+        res.render('register', {msg: 'All are filled.'});
+    } else {
+        req.session.fill = undefined;
+        res.render('register', {msg: 'Please fill in all fields.'})
+    }
 });
 
 router.post('/auth', data);
 
-// function reg (req, res, next) {
-//     if (req.fill == undefined) {
-//         res.render('register');
-//     } else if ( req.fill ) {
-//         res.render('register', {msg: 'All are filled.'});
-//     } else {
-//         res.render('register', {msg: 'please fill in all fields.'});
-//     }
-// }
-
+// save context in req.session.fill
 function data (req, res, next) {
     let isFill = Object.values(req.body).every( e => e!== "");
-    req.fill = isFill;
-    if( isFill ) {
-        res.render('register', {msg: 'All are filled.'});
-    } else {
-        res.render('register', {msg: 'please fill in all fields.'});
-    }
+    req.session.fill = isFill;
+    res.redirect('/register');
 }
 module.exports = router;
