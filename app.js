@@ -18,6 +18,14 @@ const connection = mysql.createConnection({
   database : 'msg_board_express'
 });
 
+connection.connect(function (err) {
+  if( err ) {
+    console.log('error connecting' + err.stack);
+    return ;
+  }
+  console.log('connected as id' + connection.threadId);
+})
+
 var app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
