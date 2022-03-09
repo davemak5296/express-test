@@ -18,71 +18,63 @@ router.use(session({
 /* GET users listing. */
 
 router.get('/', function (req, res, next) {
-    // render register.pug according to value of req.session.fill
-    let display = [
-        'Registration successes!',
-        'Nickname used.',
-        'Username used.',
-        'password unmatched.'
-    ];
-    if (req.session.fill == undefined ) {  // 
+    let errMsg = ( !req.session.errMsg ) ? undefined : req.session.errMsg;
+    let sucMsg = ( !req.session.sucMsg ) ? undefined : req.session.sucMsg;
+    if ( !errMsg && !sucMsg){
         res.render('register');
-    } else if (req.session.fill == false) {
-        req.session.fill = undefined;
-        res.render('register', {errMsg: 'Please fill in all fields.'})
-    } else if ( req.session.fill ) {
-        let code = 0;
-        connection.query('SELECT nickname,username FROM users', function (err, results, fields) {
-            for (let i = 0; i < results.length; i++){
-                if (req.session.nickname == results[i]['nickname']) {
-                    code = 1;
-                    res.render('register', {errMsg: display[code]});
-                    break;
-                }
-                if (req.session.username == results[i]['username']) {
-                    code = 2;
-                    res.render('register', {errMsg: display[code]});
-                    break;
-                }
-            }
-            if ( code == 0 && !req.session.pwIsMatch) {
-                code = 3;
-                res.render('register', {errMsg: display[code]});
-            } else if ( code == 0 ) {
-                connection.query({
-                    sql: 'INSERT INTO `users`(name, nickname, username, email, password) VALUES(?,?,?,?,?)',
-                    values: [
-                        req.session.name,
-                        req.session.nickname,
-                        req.session.username,
-                        req.session.email,
-                        req.session.password
-                    ]
-                }, function(error) {
-                    if (error) {
-                        console.log(error["sqlMessage"]);
-                        res.render('register', {errMsg: error["sqlMessage"]});
-                    } else {
-                        res.render('register', {sucMsg: display[code]});
-                    }
-                })
-            }
-        });
+    } else {
+        req.session.errMsg = undefined;
+        req.session.sucMsg = undefined;
+        res.render('register', {
+            errMsg: errMsg,
+            sucMsg: sucMsg
+        })
     }
-});
+})
 
 router.post('/auth', data);
 
-// save context in req.session.{key} in order to bring over to the redirected page.
 function data (req, res, next) {
-    console.log(req.body);
-    req.session.fill = Object.values(req.body).every( e => e!== "");  // test if all fields are not empty
-    req.session.name = req.body.name;
-    req.session.nickname = req.body.nickname;
-    req.session.username = req.body.username;
-    req.session.email = req.body.email;
-    req.session.password = req.body.password;
-    req.session.pwIsMatch = (req.body.password == req.body.password_re);
-    res.redirect('/register');
+    let isFill = Object.values(req.body).every( e => e!== "");  // test if all fields are not empty
+    if ( isFill ) {
+        connection.query( 'SELECT nickname,username FROM users', function(error, results, fields) {
+            for (let i=0; i<results.length; i++) {
+                if (req.body.nickname == results[i]['nickname']) {  // err case 1: all filled but nickname used.
+                    req.session.errMsg = 'Nickname used.';
+                    break;
+                } else if ( req.body.username == results[i]['username']) { // err case 2: all filled but username used.
+                    req.session.errMsg = 'Username used.';
+                    break;
+                }
+            }
+            if ( !req.session.errMsg && (req.body.password !== req.body.password_re) ) { // err case 3: all filled but password and password confirmation are unmatched.
+                req.session.errMsg = 'Password unmatched.';
+            }
+            if ( req.session.errMsg ) {
+                res.redirect('/register');
+            } else {  // successful
+                connection.query({
+                    sql: 'INSERT INTO `users`(name, nickname, username, email, password) VALUES(?,?,?,?,?)',
+                    values: [
+                        req.body.name,
+                        req.body.nickname,
+                        req.body.username,
+                        req.body.email,
+                        req.body.password
+                    ]
+                }, function(error) {
+                    if (error) {
+                        throw error;
+                    } else {
+                        req.session.sucMsg = 'Registration successes!';
+                    }
+                    res.redirect('/register');
+                })
+            }
+        })
+    } else {  // err case 4: some fields are unfilled.
+        req.session.errMsg = 'Please fill in all fields.';
+        res.redirect('/register');
+    }
 }
 module.exports = router;
