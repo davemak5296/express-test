@@ -483,6 +483,11 @@ Ensure the default browser behavior of the `hidden` attribute.
   margin-right: auto;
 }
 
+.my-0 {
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
 .mt-2\.5 {
   margin-top: 0.625rem;
 }
@@ -499,12 +504,40 @@ Ensure the default browser behavior of the `hidden` attribute.
   margin-bottom: 0.5rem;
 }
 
+.ml-2\.5 {
+  margin-left: 0.625rem;
+}
+
+.ml-2 {
+  margin-left: 0.5rem;
+}
+
 .block {
   display: block;
 }
 
+.flex {
+  display: flex;
+}
+
 .h-px {
   height: 1px;
+}
+
+.h-\[50\%\] {
+  height: 50%;
+}
+
+.h-\[\%\] {
+  height: %;
+}
+
+.h-\[50px\] {
+  height: 50px;
+}
+
+.min-h-\[70px\] {
+  min-height: 70px;
 }
 
 .w-\[700px\] {
@@ -515,6 +548,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   width: 100%;
 }
 
+.min-w-\[50px\] {
+  min-width: 50px;
+}
+
 .max-w-\[95\%\] {
   max-width: 95%;
 }
@@ -523,12 +560,24 @@ Ensure the default browser behavior of the `hidden` attribute.
   max-width: 100%;
 }
 
+.overflow-hidden {
+  overflow: hidden;
+}
+
 .rounded-md {
   border-radius: 0.375rem;
 }
 
 .rounded {
   border-radius: 0.25rem;
+}
+
+.rounded-\[50\%\] {
+  border-radius: 50%;
+}
+
+.rounded-full {
+  border-radius: 9999px;
 }
 
 .border {
@@ -569,6 +618,11 @@ Ensure the default browser behavior of the `hidden` attribute.
   background-color: rgb(203 213 225 / var(--tw-bg-opacity));
 }
 
+.bg-sky-100 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(224 242 254 / var(--tw-bg-opacity));
+}
+
 .p-2\.5 {
   padding: 0.625rem;
 }
@@ -598,6 +652,10 @@ Ensure the default browser behavior of the `hidden` attribute.
 .py-2 {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
+}
+
+.pt-5 {
+  padding-top: 1.25rem;
 }
 
 .text-center {
@@ -650,6 +708,11 @@ Ensure the default browser behavior of the `hidden` attribute.
 .text-gray-500 {
   --tw-text-opacity: 1;
   color: rgb(107 114 128 / var(--tw-text-opacity));
+}
+
+.text-blue-400 {
+  --tw-text-opacity: 1;
+  color: rgb(96 165 250 / var(--tw-text-opacity));
 }
 
 .no-underline {

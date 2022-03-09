@@ -29,3 +29,15 @@ mixin form-input(item, type, name)
     div(class='mb-2.5')
         span=item
         input(type=type, name=name, class='p-px border border-solid border-sky-200')
+
+mixin cm(nickname, time, content)
+    div(class='flex my-0 mx-auto pt-5 min-h-[70px]')
+        div(class='h-[50px] min-w-[50px] rounded-full bg-sky-100')
+        div(class='w-full ml-2.5')
+            div(class='w-full overflow-hidden')
+                span(class='text-blue-400 font-bold')= nickname
+                span  
+                span(class='')= time
+            div(class='mt-2')= content
+        </div>
+    </div>

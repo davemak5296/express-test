@@ -13,5 +13,18 @@ block content
             +btn('a', '登入', '/login')
         +h3("你好！", nickname)
         +h1("Comments")
-        +h3("請登入以發表留言")
+        if nickname
+            form(class='' method='POST' action='/comment')
+                div(class='text-red-700')= errMsg
+                div(class='text-green-700')= sucMsg
+                textarea(class='w-full p-2.5 border border-solid border-sky-200' name='content' rows='5')
+                +btn('input')
+        else
+            +h3("請登入以發表留言")
         +hr()
+        if nickname
+            section 
+                - for(var i = 0; i < results.length; i++)
+                    - var d = results[i]['created_at'];
+                    - var formatTime = d.getFullYear() + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2)  + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
+                    +cm( results[i]['nickname'], formatTime, results[i]['content'] )
