@@ -5,10 +5,13 @@ include components
 block content
     +warning()
     main(class='bg-white w-[700px] max-w-full mx-auto my-5 p-5 rounded shadow-[1px_1px_3px_rgba(232,232,232,1)]')
-        +btn('a', '註冊')
-        span  
-        +btn('a', '登入')
-        +h3("你好！")
+        if nickname
+            +btn('a', '登出', '/logout')
+        else
+            +btn('a', '註冊', '/register')
+            span  
+            +btn('a', '登入', '/login')
+        +h3("你好！", nickname)
         +h1("Comments")
         +h3("請登入以發表留言")
         +hr()

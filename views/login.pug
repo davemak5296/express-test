@@ -5,15 +5,11 @@ block content
     main(class='bg-white w-[700px] max-w-full mx-auto my-5 p-5 rounded shadow-[1px_1px_3px_rgba(232,232,232,1)]')
         +btn('a', '回留言板', '/')
         span  
-        +btn('a', '登入', '/login')
-        +h1("註冊帳號")
-        form(class='w-full p-2.5' method='POST' action='/register/auth')
+        +btn('a', '註冊', '/register')
+        +h1("登入")
+        form(class='w-full p-2.5' method='POST' action='/login/auth')
             div(class='text-red-700')= errMsg
             div(class='text-green-700')= sucMsg
-            +form-input("姓名: ", 'text', 'name')
-            +form-input("暱稱: ", 'text', 'nickname')
             +form-input("帳號: ", 'text', 'username')
-            +form-input("電郵: ", 'email', 'email')
             +form-input("密碼: ", 'password', 'password')
-            +form-input("重新輸入密碼: ", 'password', 'password_re')
             +btn('input')

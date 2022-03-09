@@ -20,58 +20,68 @@ router.use(session({
 router.get('/', function (req, res, next) {
     // render register.pug according to value of req.session.fill
     let display = [
-        'All are filled',
-        'Nickname used',
-        'Username used',
-        'password unmatched'
+        'Registration successes!',
+        'Nickname used.',
+        'Username used.',
+        'password unmatched.'
     ];
     if (req.session.fill == undefined ) {  // 
         res.render('register');
     } else if (req.session.fill == false) {
         req.session.fill = undefined;
-        res.render('register', {msg: 'Please fill in all fields.'})
+        res.render('register', {errMsg: 'Please fill in all fields.'})
     } else if ( req.session.fill ) {
-        let errCode = 0;
+        let code = 0;
         connection.query('SELECT nickname,username FROM users', function (err, results, fields) {
             for (let i = 0; i < results.length; i++){
                 if (req.session.nickname == results[i]['nickname']) {
-                    errCode = 1;
+                    code = 1;
+                    res.render('register', {errMsg: display[code]});
                     break;
                 }
                 if (req.session.username == results[i]['username']) {
-                    errCode = 2;
+                    code = 2;
+                    res.render('register', {errMsg: display[code]});
                     break;
                 }
             }
-            if ( errCode == 0 && !req.session.pwIsMatch) {
-                errCode = 3;
-            } 
-            res.render('register', {msg: display[errCode]});
-            // switch(errCode) {
-            //     case 0:
-            //         res.render('register', {msg: 'All are filled.'});
-            //         break;
-            //     case 1:
-            //         res.render('register', {msg: 'Nickname used.'});
-            //         break;
-            //     case 2:
-            //         res.render('register', {msg: 'Username used.'})
-            //         break;
-            //     case 3:
-            //         res.render('register', {msg: 'password unmatched.'})
-            //         break;
-            // }
+            if ( code == 0 && !req.session.pwIsMatch) {
+                code = 3;
+                res.render('register', {errMsg: display[code]});
+            } else if ( code == 0 ) {
+                connection.query({
+                    sql: 'INSERT INTO `users`(name, nickname, username, email, password) VALUES(?,?,?,?,?)',
+                    values: [
+                        req.session.name,
+                        req.session.nickname,
+                        req.session.username,
+                        req.session.email,
+                        req.session.password
+                    ]
+                }, function(error) {
+                    if (error) {
+                        console.log(error["sqlMessage"]);
+                        res.render('register', {errMsg: error["sqlMessage"]});
+                    } else {
+                        res.render('register', {sucMsg: display[code]});
+                    }
+                })
+            }
         });
     }
 });
 
 router.post('/auth', data);
 
-// save context in req.session.fill
+// save context in req.session.{key} in order to bring over to the redirected page.
 function data (req, res, next) {
-    req.session.fill = Object.values(req.body).every( e => e!== "");
+    console.log(req.body);
+    req.session.fill = Object.values(req.body).every( e => e!== "");  // test if all fields are not empty
+    req.session.name = req.body.name;
     req.session.nickname = req.body.nickname;
     req.session.username = req.body.username;
+    req.session.email = req.body.email;
+    req.session.password = req.body.password;
     req.session.pwIsMatch = (req.body.password == req.body.password_re);
     res.redirect('/register');
 }

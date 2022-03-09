@@ -1,10 +1,10 @@
 //- mixin btn(text)
 //-     a(class='mt-2.5 py-2.5 px-8 rounded-md bg-white text-black border border-solid border-sky-200 no-underline' href='#')= text
 
-mixin btn(ele, text)
+mixin btn(ele, text, href)
     - var cls="mt-2.5 py-2.5 px-8 rounded-md bg-white text-black border border-solid border-sky-200 no-underline"
     if ele == 'a'
-        a(class=cls)= text
+        a(class=cls href=href)= text
     else if ele == 'input'
         input(type='submit', value='提交', class=cls)
 
@@ -12,8 +12,11 @@ mixin btn(ele, text)
 mixin h1(text)
     h1(class='text-3xl my-5 font-semibold')= text
 
-mixin h3(text)
-    h3(class='text-xl my-4 font-semibold')= text
+mixin h3(text, nickname)
+    if nickname
+        h3(class='text-xl my-4 font-semibold')= text+nickname
+    else
+        h3(class='text-xl my-4 font-semibold')= text
 
 mixin hr()
     div(class='my-5 mx-auto h-px max-w-[95%] bg-[#999] opacity-50')

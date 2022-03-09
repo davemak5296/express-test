@@ -7,8 +7,11 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
+var homeRouter = require('./routes/home');
 var usersRouter = require('./routes/users');
 var regRouter = require('./routes/register');
+var loginRouter = require('./routes/login');
+var logoutRouter = require('./routes/logout');
 var testRouter = require('./routes/test');
 
 const connection = mysql.createConnection({
@@ -44,8 +47,11 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
+app.use('/home', homeRouter);
 app.use('/users', usersRouter);
 app.use('/register', regRouter);
+app.use('/login', loginRouter);
+app.use('/logout', logoutRouter);
 app.use('/test', testRouter);
 
 // app.get('/', (req, res) => {
