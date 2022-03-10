@@ -1,8 +1,10 @@
 //- mixin btn(text)
 //-     a(class='mt-2.5 py-2.5 px-8 rounded-md bg-white text-black border border-solid border-sky-200 no-underline' href='#')= text
 
-mixin btn(ele, text, href)
+mixin btn(ele, text, href, chgNickname)
     - var cls="mt-2.5 py-2.5 px-8 rounded-md bg-white text-black border border-solid border-sky-200 no-underline"
+    if chgNickname 
+        - cls = 'chg-nickname ' + cls;
     if ele == 'a'
         a(class=cls href=href)= text
     else if ele == 'input'
@@ -30,7 +32,7 @@ mixin form-input(item, type, name)
         span=item
         input(type=type, name=name, class='p-px border border-solid border-sky-200')
 
-mixin cm(id, nickname, time, content, isAuthor)
+mixin cm(id, nickname, time, content, isAuthor, isHide)
     div(class='flex my-0 mx-auto pt-5 min-h-[70px]')
         div(class='h-[50px] min-w-[50px] rounded-full bg-sky-100')
         div(class='w-full ml-2.5')
@@ -40,5 +42,13 @@ mixin cm(id, nickname, time, content, isAuthor)
                 span(class='')= time
                 if isAuthor
                     a(class='text-[#00f]' href='/home/'+id)  編輯 
-                    a(class='text-[#00f]' href='') 刪除 
+                    if isHide == '0'
+                        form(style='display:inline' method='POST' action='/home/'+id+'/?_method=DELETE')
+                            input(class='text-[#00f] cursor-pointer' type='submit' value='刪除')
+                    else 
+                        span(class='text-red-500 font-bold') 已刪除 
+                        form(style='display:inline' method='POST' action='/home/admin/'+id+'/?_method=PUT') 
+                            input(class='text-[#00f] cursor-pointer' type='submit' value='顯示')
+                        //- a(class='text-[#00f]' href='/home/admin/'+id) 顯示 
+                    //- a(class='text-[#00f]' href='/home/'+id+'/?_method_DELETE') 刪除 
             div(class='mt-2')= content

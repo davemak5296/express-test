@@ -1,12 +1,15 @@
 extends layout
-
 include components
-
 block content
     +warning()
     main(class='bg-white w-[700px] max-w-full mx-auto my-5 p-5 rounded shadow-[1px_1px_3px_rgba(232,232,232,1)]')
         if nickname
             +btn('a', '登出', '/logout')
+            span  
+            +btn('a', '編輯暱稱', '#', true)
+            form(class='dp-tog mt-3 hidden' method='POST' action='/home/nickname?_method=PUT')
+                textarea(class='w-full p-2.5 border border-solid border-sky-200' name='new_nickname' rows='1')= nickname
+                +btn('input')
         else
             +btn('a', '註冊', '/register')
             span  
@@ -26,7 +29,7 @@ block content
             - for(var i = 0; i < results.length; i++)
                 - var d = results[i]['created_at'];
                 - var formatedTime = d.getFullYear() + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2)  + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
-                if nickname == results[i]['nickname']
-                    +cm( results[i]['id'], results[i]['nickname'], formatedTime, results[i]['content'], true )
+                if (nickname == results[i]['nickname'] || nickname == 'admin')
+                    +cm( results[i]['id'], results[i]['nickname'], formatedTime, results[i]['content'], true, results[i]['is_hide'] )
                 else
                     +cm( results[i]['id'], results[i]['nickname'], formatedTime, results[i]['content'] )
