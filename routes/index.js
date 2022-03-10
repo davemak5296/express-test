@@ -14,7 +14,14 @@ router.get('/', function (req, res, next) {
     if ( req.session.loggedin ) {
         res.redirect('/home');
     } else {
-        res.render('index', { title: '留言板' });
+        connection.query({
+            sql: 'SELECT C.id, C.username, U.nickname, C.content, C.created_at, C.is_hide FROM comments as C LEFT JOIN users as U ON C.username = U.username WHERE is_hide = 0 ORDER BY C.created_at DESC'
+        }, function (error, results, fields) {
+            if (error) {
+                throw error;
+            }
+            res.render('index', { results: results, })
+        })
     }
 });
 

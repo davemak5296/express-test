@@ -2,6 +2,10 @@ var express = require('express');
 var router = express.Router();
 const session = require('express-session');
 var mysql = require('mysql');
+var methodOverride = require('method-override');
+const { connect } = require('.');
+
+router.use(methodOverride('_method'));
 
 const connection = mysql.createConnection({
   host : 'localhost',
@@ -20,9 +24,6 @@ router.get('/', function (req, res, next) {
             if (error) {
                 throw error;
             }
-            for(let i = 0; i < results.length; i++) {
-                console.log(results[i]);
-            }
             req.session.errMsg = undefined;
             req.session.sucMsg = undefined;
             res.render('index', {
@@ -37,5 +38,50 @@ router.get('/', function (req, res, next) {
     }
 })
 
+router.get('/:cmId', function (req, res, next) {
+    if ( req.session.loggedin ) {
+        connection.query({
+            sql: 'SELECT content,username FROM comments WHERE id = ?',
+            values: [ req.params['cmId'] ]
+        }, function (error, results, fields) {
+            // compare author of specific comment id with username of the loggedin user.
+            if ( req.session.username == results[0]['username'] ) {
+                res.render('edit', {
+                    id: req.params['cmId'],
+                    content: results[0]['content'],
+                    errMsg: req.session.errMsg
+                })
+            } else {
+                req.session.errMsg = 'Unauthorized edit.';
+                res.redirect('/home');
+            }
+        })
+    } else {
+        res.redirect('/');
+    }
+})
+
+router.put('/:cmId', function (req, res, next) {
+    if ( req.session.loggedin ) {
+        if ( req.body.content ) {
+            connection.query({
+                sql: 'UPDATE comments SET content = ? WHERE id = ?',
+                values: [ req.body.content, req.params['cmId']]
+            }, function (error, results, fields) {
+                if (error) {
+                    throw error;
+                } else {
+                    req.session.sucMsg = 'Edit successes.';
+                    res.redirect('/home');
+                }
+            })
+        } else {
+            req.session.errMsg = 'Please writes your comments.';
+            res.redirect('/home/'+req.params['cmId']);
+        }
+    } else {
+        res.redirect('/');
+    }
+})
 
 module.exports = router;

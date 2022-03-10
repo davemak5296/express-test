@@ -22,9 +22,11 @@ block content
         else
             +h3("請登入以發表留言")
         +hr()
-        if nickname
-            section 
-                - for(var i = 0; i < results.length; i++)
-                    - var d = results[i]['created_at'];
-                    - var formatTime = d.getFullYear() + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2)  + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
-                    +cm( results[i]['nickname'], formatTime, results[i]['content'] )
+        section 
+            - for(var i = 0; i < results.length; i++)
+                - var d = results[i]['created_at'];
+                - var formatedTime = d.getFullYear() + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2)  + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
+                if nickname == results[i]['nickname']
+                    +cm( results[i]['id'], results[i]['nickname'], formatedTime, results[i]['content'], true )
+                else
+                    +cm( results[i]['id'], results[i]['nickname'], formatedTime, results[i]['content'] )

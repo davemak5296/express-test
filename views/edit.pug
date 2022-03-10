@@ -1,0 +1,11 @@
+extends layout
+include components
+block content
+    +warning()
+    main(class='bg-white w-[700px] max-w-full mx-auto my-5 p-5 rounded shadow-[1px_1px_3px_rgba(232,232,232,1)]')
+        +h1("編輯留言")
+        form(class='w-full p-2.5' method='POST' action='/home/'+id+'?_method=PUT')
+            div(class='text-red-700')= errMsg
+            div(class='text-green-700')= sucMsg
+            textarea(class='w-full p-2.5 border border-solid border-sky-200' name='content' rows='5')= content
+            +btn('input')

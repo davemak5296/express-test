@@ -30,7 +30,7 @@ mixin form-input(item, type, name)
         span=item
         input(type=type, name=name, class='p-px border border-solid border-sky-200')
 
-mixin cm(nickname, time, content)
+mixin cm(id, nickname, time, content, isAuthor)
     div(class='flex my-0 mx-auto pt-5 min-h-[70px]')
         div(class='h-[50px] min-w-[50px] rounded-full bg-sky-100')
         div(class='w-full ml-2.5')
@@ -38,6 +38,7 @@ mixin cm(nickname, time, content)
                 span(class='text-blue-400 font-bold')= nickname
                 span  
                 span(class='')= time
+                if isAuthor
+                    a(class='text-[#00f]' href='/home/'+id)  編輯 
+                    a(class='text-[#00f]' href='') 刪除 
             div(class='mt-2')= content
-        </div>
-    </div>
