@@ -19,37 +19,67 @@ router.get('/', function (req, res, next) {
         let errMsg = req.session.errMsg;
         let sucMsg = req.session.sucMsg;
         if ( req.session.username == 'admin') {
-            connection.query({
-                sql: 'SELECT C.id, C.username, U.nickname, C.content, C.created_at, C.is_hide FROM comments as C LEFT JOIN users as U ON C.username = U.username ORDER BY C.created_at DESC'
-            }, function (error, results, fields){
-                if (error) {
-                    throw error;
+            connection.query(
+                {
+                    sql: 'SELECT C.id, C.username, U.nickname, C.content, C.created_at, C.is_hide FROM comments as C LEFT JOIN users as U ON C.username = U.username ORDER BY C.created_at DESC'
+                },
+                function (error, results, fields){
+                    let cmPerPage = 5;
+                    let totalPage = Math.ceil( results.length / cmPerPage);
+                    if (error) {
+                        throw error;
+                    } else if ( !req.query.page ) {
+                        res.redirect('/home?page=1');
+                    } else {
+                        if ( req.query.page < 1 || req.query.page > totalPage) {
+                            res.redirect('/?page=1');
+                        } else {
+                            req.session.errMsg = undefined;
+                            req.session.sucMsg = undefined;
+                            res.render('index', {
+                                nickname: req.session.nickname,
+                                results: results,
+                                errMsg: errMsg,
+                                sucMsg: sucMsg,
+                                currentPage: req.query.page,
+                                cmPerPage: cmPerPage,
+                                totalPage: totalPage
+                            })
+                        }
+                    }
                 }
-                req.session.errMsg = undefined;
-                req.session.sucMsg = undefined;
-                res.render('index', {
-                    nickname: req.session.nickname,
-                    results: results,
-                    errMsg: errMsg,
-                    sucMsg: sucMsg
-                })
-            })
+            )
         } else {
-            connection.query({
-                sql: 'SELECT C.id, C.username, U.nickname, C.content, C.created_at, C.is_hide FROM comments as C LEFT JOIN users as U ON C.username = U.username WHERE is_hide = 0 ORDER BY C.created_at DESC'
-            }, function (error, results, fields) {
-                if (error) {
-                    throw error;
+            connection.query(
+                {
+                    sql: 'SELECT C.id, C.username, U.nickname, C.content, C.created_at, C.is_hide FROM comments as C LEFT JOIN users as U ON C.username = U.username WHERE is_hide = 0 ORDER BY C.created_at DESC'
+                },
+                function (error, results, fields) {
+                    let cmPerPage = 5;
+                    let totalPage = Math.ceil( results.length / cmPerPage);
+                    if (error) {
+                        throw error;
+                    } else if ( !req.query.page ) {
+                        res.redirect('/home?page=1');
+                    } else {
+                        if ( req.query.page < 1 || req.query.page > totalPage) {
+                            res.redirect('/?page=1');
+                        } else {
+                            req.session.errMsg = undefined;
+                            req.session.sucMsg = undefined;
+                            res.render('index', {
+                                nickname: req.session.nickname,
+                                results: results,
+                                errMsg: errMsg,
+                                sucMsg: sucMsg,
+                                currentPage: req.query.page,
+                                cmPerPage: cmPerPage,
+                                totalPage: totalPage
+                            })
+                        }
+                    }
                 }
-                req.session.errMsg = undefined;
-                req.session.sucMsg = undefined;
-                res.render('index', {
-                    nickname: req.session.nickname,
-                    results: results,
-                    errMsg: errMsg,
-                    sucMsg: sucMsg
-                })
-            })
+            )
         }
     } else {
         res.redirect('/');

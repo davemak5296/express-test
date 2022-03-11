@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 const session = require('express-session');
 var mysql = require('mysql');
+var url = require('url');
+var querystring = require('querystring');
 
 const connection = mysql.createConnection({
   host : 'localhost',
@@ -12,15 +14,32 @@ const connection = mysql.createConnection({
 
 router.get('/', function (req, res, next) {
     if ( req.session.loggedin ) {
-        res.redirect('/home');
+        res.redirect( url.format({
+            pathname: "/home",
+            query: req.query
+        }) )
     } else {
         connection.query({
             sql: 'SELECT C.id, C.username, U.nickname, C.content, C.created_at, C.is_hide FROM comments as C LEFT JOIN users as U ON C.username = U.username WHERE is_hide = 0 ORDER BY C.created_at DESC'
         }, function (error, results, fields) {
+            let cmPerPage = 5;
+            let totalPage = Math.ceil( results.length / cmPerPage);
             if (error) {
                 throw error;
+            } else if ( !req.query.page ) {
+                res.redirect('/?page=1');
+            } else {
+                if ( req.query.page < 1 || req.query.page > totalPage) {
+                    res.redirect('/?page=1');
+                } else {
+                    res.render('index', {
+                        results: results,
+                        currentPage: req.query.page,
+                        cmPerPage: cmPerPage,
+                        totalPage: totalPage
+                    })
+                }
             }
-            res.render('index', { results: results, })
         })
     }
 });

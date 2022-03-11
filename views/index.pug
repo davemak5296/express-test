@@ -16,6 +16,7 @@ block content
             +btn('a', '登入', '/login')
         +h3("你好！", nickname)
         +h1("Comments")
+        div= testMsg
         if nickname
             form(class='' method='POST' action='/comment')
                 div(class='text-red-700')= errMsg
@@ -29,7 +30,49 @@ block content
             - for(var i = 0; i < results.length; i++)
                 - var d = results[i]['created_at'];
                 - var formatedTime = d.getFullYear() + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2)  + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2);
-                if (nickname == results[i]['nickname'] || nickname == 'admin')
-                    +cm( results[i]['id'], results[i]['nickname'], formatedTime, results[i]['content'], true, results[i]['is_hide'] )
-                else
-                    +cm( results[i]['id'], results[i]['nickname'], formatedTime, results[i]['content'] )
+                - var max = currentPage * cmPerPage - 1;
+                - var min = (currentPage - 1) * cmPerPage;
+                if i >= min && i <= max
+                    if (nickname == results[i]['nickname'] || nickname == 'admin')
+                        +cm(
+                            results[i]['id'],
+                            results[i]['nickname'],
+                            formatedTime,
+                            results[i]['content'], 
+                            true, 
+                            results[i]['is_hide']
+                        )
+                    else
+                        +cm(
+                            results[i]['id'], 
+                            results[i]['nickname'], 
+                            formatedTime, 
+                            results[i]['content']
+                        )
+        +hr()
+        div(class='tracking-wider')= '總共'+results.length+'個留言，頁數'+currentPage+' / '+totalPage
+        div(class='my-5 flex justify-center') 
+            if currentPage == 1
+                if totalPage == 1
+                    +pagin('首頁', '/?page=1')
+                    +pagin('末頁', '?page='+totalPage)
+                else 
+                    +pagin('首頁', '/?page=1')
+                    +pagin('下一頁', '/?page='+(Number(currentPage)+1))
+                    +pagin('末頁', '?page='+totalPage)
+            else if currentPage == totalPage
+                +pagin('首頁', '/?page=1')
+                +pagin('上一頁', '/?page='+(Number(currentPage)-1))
+                +pagin('末頁', '?page='+totalPage)
+            else
+                +pagin('首頁', '/?page=1')
+                +pagin('上一頁', '/?page='+(Number(currentPage)-1))
+                +pagin('下一頁', '/?page='+(Number(currentPage)+1))
+                +pagin('末頁', '?page='+totalPage)
+
+
+        //- div(class='my-5 flex justify-center') 
+        //-     +pagin('首頁', '/?page=1')
+        //-     +pagin('下一頁', '/?page='+(Number(currentPage)+1))
+        //-     +pagin('上一頁', '/?page='+(Number(currentPage)-1))
+        //-     +pagin('末頁', '?page='+totalPage)
