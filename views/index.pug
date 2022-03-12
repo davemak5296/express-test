@@ -50,25 +50,30 @@ block content
                             results[i]['content']
                         )
         +hr()
-        div(class='tracking-wider')= '總共'+results.length+'個留言，頁數'+currentPage+' / '+totalPage
+        if totalPage > 0
+            div(class='tracking-wider')= '總共'+results.length+'個留言，頁數'+currentPage+' / '+totalPage
+        else 
+            div(class='tracking-wider') 沒有任何留言！
+
         div(class='my-5 flex justify-center') 
-            if currentPage == 1
-                if totalPage == 1
+            if totalPage > 0
+                if currentPage == 1
+                    if totalPage == 1
+                        +pagin('首頁', '/?page=1')
+                        +pagin('末頁', '?page='+totalPage)
+                    else 
+                        +pagin('首頁', '/?page=1')
+                        +pagin('下一頁', '/?page='+(Number(currentPage)+1))
+                        +pagin('末頁', '?page='+totalPage)
+                else if currentPage == totalPage
                     +pagin('首頁', '/?page=1')
+                    +pagin('上一頁', '/?page='+(Number(currentPage)-1))
                     +pagin('末頁', '?page='+totalPage)
-                else 
+                else
                     +pagin('首頁', '/?page=1')
+                    +pagin('上一頁', '/?page='+(Number(currentPage)-1))
                     +pagin('下一頁', '/?page='+(Number(currentPage)+1))
                     +pagin('末頁', '?page='+totalPage)
-            else if currentPage == totalPage
-                +pagin('首頁', '/?page=1')
-                +pagin('上一頁', '/?page='+(Number(currentPage)-1))
-                +pagin('末頁', '?page='+totalPage)
-            else
-                +pagin('首頁', '/?page=1')
-                +pagin('上一頁', '/?page='+(Number(currentPage)-1))
-                +pagin('下一頁', '/?page='+(Number(currentPage)+1))
-                +pagin('末頁', '?page='+totalPage)
 
 
         //- div(class='my-5 flex justify-center') 

@@ -20,7 +20,7 @@ router.get('/', function (req, res, next) {
         }) )
     } else {
         connection.query({
-            sql: 'SELECT C.id, C.username, U.nickname, C.content, C.created_at, C.is_hide FROM comments as C LEFT JOIN users as U ON C.username = U.username WHERE is_hide = 0 ORDER BY C.created_at DESC'
+            sql: 'SELECT C.id, C.username, U.nickname, C.content, C.created_at, C.is_hide FROM comments_pspt as C LEFT JOIN users_pspt as U ON C.username = U.username WHERE is_hide = 0 ORDER BY C.created_at DESC'
         }, function (error, results, fields) {
             let cmPerPage = 5;
             let totalPage = Math.ceil( results.length / cmPerPage);
@@ -29,7 +29,7 @@ router.get('/', function (req, res, next) {
             } else if ( !req.query.page ) {
                 res.redirect('/?page=1');
             } else {
-                if ( req.query.page < 1 || req.query.page > totalPage) {
+                if ( totalPage !== 0 && (req.query.page < 1 || req.query.page > totalPage) ) {
                     res.redirect('/?page=1');
                 } else {
                     res.render('index', {
@@ -49,7 +49,7 @@ router.post('/comment', function (req, res, next) {
         if ( req.body.content !== "" ) {
             req.session.content = req.body.content;
             connection.query({
-                sql: 'INSERT INTO comments(username, content) VALUES(?,?)',
+                sql: 'INSERT INTO comments_pspt(username, content) VALUES(?,?)',
                 values: [
                     req.session.username,
                     req.session.content

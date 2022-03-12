@@ -21,7 +21,7 @@ router.get('/', function (req, res, next) {
         if ( req.session.username == 'admin') {
             connection.query(
                 {
-                    sql: 'SELECT C.id, C.username, U.nickname, C.content, C.created_at, C.is_hide FROM comments as C LEFT JOIN users as U ON C.username = U.username ORDER BY C.created_at DESC'
+                    sql: 'SELECT C.id, C.username, U.nickname, C.content, C.created_at, C.is_hide FROM comments_pspt as C LEFT JOIN users_pspt as U ON C.username = U.username ORDER BY C.created_at DESC'
                 },
                 function (error, results, fields){
                     let cmPerPage = 5;
@@ -31,8 +31,8 @@ router.get('/', function (req, res, next) {
                     } else if ( !req.query.page ) {
                         res.redirect('/home?page=1');
                     } else {
-                        if ( req.query.page < 1 || req.query.page > totalPage) {
-                            res.redirect('/?home?page=1');
+                        if ( totalPage !== 0 && ( req.query.page < 1 || req.query.page > totalPage ) ) {
+                            res.redirect('/home?page=1');
                         } else {
                             req.session.errMsg = undefined;
                             req.session.sucMsg = undefined;
@@ -52,7 +52,7 @@ router.get('/', function (req, res, next) {
         } else {
             connection.query(
                 {
-                    sql: 'SELECT C.id, C.username, U.nickname, C.content, C.created_at, C.is_hide FROM comments as C LEFT JOIN users as U ON C.username = U.username WHERE is_hide = 0 ORDER BY C.created_at DESC'
+                    sql: 'SELECT C.id, C.username, U.nickname, C.content, C.created_at, C.is_hide FROM comments_pspt as C LEFT JOIN users_pspt as U ON C.username = U.username WHERE is_hide = 0 ORDER BY C.created_at DESC'
                 },
                 function (error, results, fields) {
                     let cmPerPage = 5;
@@ -62,8 +62,8 @@ router.get('/', function (req, res, next) {
                     } else if ( !req.query.page ) {
                         res.redirect('/home?page=1');
                     } else {
-                        if ( req.query.page < 1 || req.query.page > totalPage) {
-                            res.redirect('/?home?page=1');
+                        if ( totalPage !== 0 && ( req.query.page < 1 || req.query.page > totalPage ) ) {
+                            res.redirect('/home?page=1');
                         } else {
                             req.session.errMsg = undefined;
                             req.session.sucMsg = undefined;
@@ -89,7 +89,7 @@ router.get('/', function (req, res, next) {
 router.get('/:cmId', function (req, res, next) {
     if ( req.session.loggedin ) {
         connection.query({
-            sql: 'SELECT content,username FROM comments WHERE id = ?',
+            sql: 'SELECT content,username FROM comments_pspt WHERE id = ?',
             values: [ req.params['cmId'] ]
         }, function (error, results, fields) {
             // compare author of specific comment id with username of the loggedin user.
@@ -113,7 +113,7 @@ router.put('/nickname', function (req, res, next) {
     if ( req.session.loggedin ) {
         if ( req.body.new_nickname ) {
             connection.query({
-                sql: 'UPDATE users SET nickname = ? WHERE username = ?',
+                sql: 'UPDATE users_pspt SET nickname = ? WHERE username = ?',
                 values: [ req.body.new_nickname, req.session.username ]
             }, function (error, results, fields) {
                 req.session.sucMsg = 'Nickname changed.';
@@ -133,7 +133,7 @@ router.put('/:cmId', function (req, res, next) {
     if ( req.session.loggedin ) {
         if ( req.body.content ) {
             connection.query({
-                sql: 'UPDATE comments SET content = ? WHERE id = ?',
+                sql: 'UPDATE comments_pspt SET content = ? WHERE id = ?',
                 values: [ req.body.content, req.params['cmId']]
             }, function (error, results, fields) {
                 if (error) {
@@ -155,7 +155,7 @@ router.put('/:cmId', function (req, res, next) {
 router.delete('/:cmId', function (req, res, next) {
     if ( req.session.loggedin ) {
         connection.query({
-            sql: 'UPDATE comments SET is_hide = 1 WHERE id = ?',
+            sql: 'UPDATE comments_pspt SET is_hide = 1 WHERE id = ?',
             values: [ req.params['cmId']]
         }, function (error, results, fields) {
             if ( error ) {
@@ -174,7 +174,7 @@ router.delete('/:cmId', function (req, res, next) {
 router.put('/admin/:cmId', function (req, res, next) {
     if ( req.session.username == 'admin') {
         connection.query({
-            sql: 'UPDATE comments SET is_hide = 0 WHERE id = ?',
+            sql: 'UPDATE comments_pspt SET is_hide = 0 WHERE id = ?',
             values: [ req.params['cmId']]
         }, function (error, results, fields){
             req.session.sucMsg = 'Comment is unhidden.';
