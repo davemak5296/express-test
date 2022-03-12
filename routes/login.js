@@ -41,22 +41,18 @@ passport.use( new LocalStrategy( (username, password, cb) => {
             })
         }
     )
-
 }))
 passport.serializeUser( function (user, cb) {
-    // console.log(`user is ${JSON.stringify(user)}`);
-    cb(null, {id: user[0]['id'], username: user[0]['username']});
-    // process.nextTick(function () {
-    //     cb(null, {id: user[0]['id'], username: user[0]['username']});
-    // });
+    cb(null, {
+        id: user[0]['id'],
+        username: user[0]['username'],
+        nickname: user[0]['nickname']
+    });
 });
 
 passport.deserializeUser( function (user, cb) {
     console.log(user);
     cb(null, user);
-    // process.nextTick( function () {
-    //     return cb(null, user);
-    // });
 });
 
 router.get('/', function(req, res, next) {
@@ -68,21 +64,13 @@ router.get('/', function(req, res, next) {
         res.render('login');
     }
 })
-// router.post('/auth', function (req, res, next) {
-//     passport.authenticate('local', function(err, user, info) {
-//         if(err) throw error;
-//         if(!user){ return res.redirect('/login'); }
-//         req.login(user,next)
-//     }),
-//     function (req, res) {
-//         res.redirect('/home?page=1');
-//     }
-// })
+
 router.post('/auth',
     passport.authenticate('local', { failureRedirect: '/login' }),
     function (req, res) {
-        // console.log(req.user[0]['username']);
-        // console.log(req.session.passport.user);
+        req.session.loggedin = true;
+        req.session.username = req.session.passport.user['username'];
+        req.session.nickname = req.session.passport.user['nickname'];
         res.redirect('/home?page=1');
     }
 );

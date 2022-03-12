@@ -81,9 +81,6 @@ function data (req, res, next) {
                             };
                             req.session.sucMsg = 'Registration successes!';
                             res.redirect('/register');
-                            // req.login( user, function (error) {
-                            //     if (error) { throw error; }
-                            // })
                         }
                     )
                 })

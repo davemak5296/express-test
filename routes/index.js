@@ -47,6 +47,7 @@ router.get('/', function (req, res, next) {
 router.post('/comment', function (req, res, next) {
     if ( req.session.loggedin ) {
         if ( req.body.content !== "" ) {
+            console.log(req.session.username);
             req.session.content = req.body.content;
             connection.query({
                 sql: 'INSERT INTO comments_pspt(username, content) VALUES(?,?)',
