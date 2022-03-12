@@ -32,7 +32,7 @@ router.get('/', function (req, res, next) {
                         res.redirect('/home?page=1');
                     } else {
                         if ( req.query.page < 1 || req.query.page > totalPage) {
-                            res.redirect('/?page=1');
+                            res.redirect('/?home?page=1');
                         } else {
                             req.session.errMsg = undefined;
                             req.session.sucMsg = undefined;
@@ -63,7 +63,7 @@ router.get('/', function (req, res, next) {
                         res.redirect('/home?page=1');
                     } else {
                         if ( req.query.page < 1 || req.query.page > totalPage) {
-                            res.redirect('/?page=1');
+                            res.redirect('/?home?page=1');
                         } else {
                             req.session.errMsg = undefined;
                             req.session.sucMsg = undefined;

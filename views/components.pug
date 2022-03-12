@@ -49,8 +49,6 @@ mixin cm(id, nickname, time, content, isAuthor, isHide)
                         span(class='text-red-500 font-bold') 已刪除 
                         form(style='display:inline' method='POST' action='/home/admin/'+id+'/?_method=PUT') 
                             input(class='text-[#00f] cursor-pointer' type='submit' value='顯示')
-                        //- a(class='text-[#00f]' href='/home/admin/'+id) 顯示 
-                    //- a(class='text-[#00f]' href='/home/'+id+'/?_method_DELETE') 刪除 
             div(class='mt-2')= content
 
 mixin pagin(txt, href)
