@@ -5,6 +5,9 @@ var session = require('express-session');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var passport = require('passport');
+var localStrategy = require('passport-local');
+var crypto = require('crypto');
 
 var indexRouter = require('./routes/index');
 var homeRouter = require('./routes/home');
@@ -36,8 +39,8 @@ app.set('view engine', 'pug');
 
 app.use(session({
   secret : 'secret',
-  resave : true,
-  saveUninitializaed : true
+  resave : false,
+  saveUninitializaed : false
 }));
 
 app.use(logger('dev'));
@@ -45,6 +48,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(passport.initialize());
+app.use(passport.session());
+// app.use(passport.authenticate('session'));
+// app.use(passport());
 
 app.use('/', indexRouter);
 app.use('/home', homeRouter);

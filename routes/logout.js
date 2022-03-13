@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 const session = require('express-session');
+const passport = require('passport');
+const localStrategy = require('passport-local');
 var mysql = require('mysql');
 
 const connection = mysql.createConnection({
