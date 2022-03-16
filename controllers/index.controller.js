@@ -28,6 +28,7 @@ const indexGet = (req, res) => {
                 }
             })
             .catch ((error) => {
+                console.log('31');
                 console.log(JSON.stringify(error));
                 return res.send(error);
             })

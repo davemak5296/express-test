@@ -8,19 +8,21 @@ GET /login -- OK
 
 POST /login -- OK
 
-GET /home
+GET /home -- OK
+
+GET /home/admin -- OK
 
 POST /comment -- OK
 
-GET /home/:cmId
+GET /home/:cmId -- OK
 
-PUT /home/:cmId
+PUT /home/:cmId -- OK
 
-DELETE /home/:cmId
+DELETE /home/:cmId -- OK
 
 PUT /home/admin/:cmId
 
-PUT /home/nickname
+PUT /home/nickname -- OK
 
 POST /logout -- OK
 

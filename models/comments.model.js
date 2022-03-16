@@ -7,6 +7,17 @@ const connection = mysql.createConnection({
   database : 'msg_board_express'
 });
 
+const showCmForAdmin = () => {
+    return new Promise ((resolve, reject) => {
+        connection.query('SELECT C.id, C.username, U.nickname, C.content, C.created_at, C.is_hide FROM comments_pspt as C LEFT JOIN users_pspt as U ON C.username = U.username ORDER BY C.created_at DESC', (error, results) => {
+            if ( error ) {
+                return reject(error);
+            } else {
+                return resolve( results );
+            }
+        })
+    })
+}
 const showCm = () => {
     return new Promise ((resolve, reject) => {
         connection.query('SELECT C.id, C.username, U.nickname, C.content, C.created_at, C.is_hide FROM comments_pspt as C LEFT JOIN users_pspt as U ON C.username = U.username WHERE is_hide = 0 ORDER BY C.created_at DESC', (error, results) => {
@@ -18,7 +29,23 @@ const showCm = () => {
         })
     })
 }
-
+const showEditCm = ( id ) => {
+    return new Promise ((resolve, reject) => {
+        connection.query(
+            {
+                sql: 'SELECT content,username FROM comments_pspt WHERE id = ?',
+                values: [ id ]
+            },
+            (error, results) => {
+                if (error) {
+                    return reject(error);
+                } else {
+                    return resolve(results);
+                }
+            }
+        )
+    })
+}
 const postCm = ( session ) => {
     return new Promise ((resolve, reject) => {
         connection.query(
@@ -42,7 +69,85 @@ const postCm = ( session ) => {
     })
 }
 
+const editCm = ( content, id ) => {
+    return new Promise ((resolve, reject) => {
+        connection.query(
+            {
+                sql:'UPDATE comments_pspt SET content = ? WHERE id = ?',
+                values: [ content, id ]
+            }
+            , (error, results) => {
+                if ( error ) {
+                    return reject(error);
+                } else {
+                    return resolve();
+                }
+        })
+    })
+}
+
+const delCm = ( id ) => {
+    return new Promise ((resolve, reject) => {
+        connection.query(
+            {
+                sql: 'UPDATE comments_pspt SET is_hide = 1 WHERE id = ?',
+                values: [ id ]
+            },
+            (error, results) => {
+                if ( error ) {
+                    return reject(error);
+                } else {
+                    return resolve();
+                }
+            }
+        )
+    })
+}
+
+const unhideCm = ( id ) => {
+    return new Promise ((resolve, reject) => {
+        connection.query(
+            {
+                sql: 'UPDATE comments_pspt SET is_hide = 0 WHERE id = ?',
+                values: [ id ]
+            },
+            (error, results) => {
+                if ( error ) {
+                    return reject(error);
+                } else {
+                    return resolve();
+                }
+            }
+        )
+    })
+}
+const editNick = ( newNick, username) => {
+    return new Promise ((resolve, reject) => {
+        connection.query(
+            {
+                sql:'UPDATE users_pspt SET nickname=? WHERE username=?',
+                values:[ newNick, username ]
+            },
+            (error, results) => {
+                if ( error ) {
+                    console.log('error!!!!');
+                    return reject(error);
+                } else {
+                    console.log('ok!!');
+                    return resolve();
+                }
+            }
+        )
+    })
+}
+
 module.exports = {
+    showCmForAdmin,
     showCm,
-    postCm
+    showEditCm,
+    editCm,
+    delCm,
+    postCm,
+    unhideCm,
+    editNick
 }
