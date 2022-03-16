@@ -47,7 +47,18 @@ const cmPost = ( req, res ) => {
             })
     }
 }
+
+const logout = ( req, res ) => {
+    if ( req.session.loggedin ) {
+        req.session.destroy();
+        res.redirect('/');
+    } else {
+        res.redirect('/');
+    }
+}
+
 module.exports = {
     indexGet,
-    cmPost
+    cmPost,
+    logout
 }

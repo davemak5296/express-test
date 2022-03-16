@@ -7,7 +7,7 @@ block content
         span  
         +btn('a', '註冊', '/register')
         +h1("登入")
-        form(class='w-full p-2.5' method='POST' action='/login/auth')
+        form(class='w-full p-2.5' method='POST' action='/login')
             div(class='text-red-700')= errMsg
             div(class='text-green-700')= sucMsg
             +form-input("帳號: ", 'text', 'username')

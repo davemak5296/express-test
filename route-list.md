@@ -1,16 +1,16 @@
-GET /
+GET / -- OK
 
-GET /register
+GET /register -- OK
 
-POST /register/auth
+POST /register/auth -- OK
 
-GET /login
+GET /login -- OK
 
-POST /login/auth
+POST /login -- OK
 
 GET /home
 
-POST /comment
+POST /comment -- OK
 
 GET /home/:cmId
 
@@ -22,7 +22,7 @@ PUT /home/admin/:cmId
 
 PUT /home/nickname
 
-POST /logout
+POST /logout -- OK
 
 以index.js為例，query內應只處理將query結果回傳，其餘在controller處理
 

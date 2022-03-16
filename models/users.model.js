@@ -43,7 +43,28 @@ const showUserForReg = () => {
     })
 }
 
+const showUserForLogin = ( username ) => {
+    return new Promise ((resolve, reject) => {
+        connection.query(
+            {
+                sql: 'SELECT * from users_pspt WHERE username =?',
+                values: [
+                    username
+                ]
+            },
+            (error, results) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve( results );
+                }
+            }
+        )
+    })
+}
+
 module.exports = {
     createUser,
-    showUserForReg
+    showUserForReg,
+    showUserForLogin
 };
