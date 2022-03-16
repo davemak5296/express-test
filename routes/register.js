@@ -1,6 +1,6 @@
-var express = require('express');
-import regCtrl from '../controllers/register.controller';
-var router = express.Router();
+let express = require('express');
+let router = express.Router();
+let regCtrl = require('../controllers/register.controller');
 
 router.route('/').get( regCtrl.regGet );
 router.route('/').post( regCtrl.regPost );

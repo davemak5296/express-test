@@ -1,4 +1,4 @@
-var mysql = require('mysql');
+let mysql = require('mysql');
 
 const connection = mysql.createConnection({
   host : 'localhost',
@@ -7,23 +7,25 @@ const connection = mysql.createConnection({
   database : 'msg_board_express'
 });
 
-const createUser = ( values, hash, salt ) => {
+const createUser = ( body, hash, salt ) => {
     return new Promise (( resolve, reject ) => {
-        connection.query({
-            sql: 'INSERT INTO users_pspt(name, nickname, username, email, hashed_password, salt) VALUES(?,?,?,?,?,?)',
-            values: [
-                values.name,
-                values,nickname,
-                values.username,
-                values.email,
-                hash,
-                salt
-            ]
-        }, (error,results) => {
+        connection.query(
+            {
+                sql: 'INSERT INTO users_pspt(name, nickname, username, email, hashed_password, salt) VALUES(?,?,?,?,?,?)',
+                values: [
+                    body.name,
+                    body.nickname,
+                    body.username,
+                    body.email,
+                    hash,
+                    salt
+                ]
+            }
+        , (error,results) => {
             if (error) {
-                reject(error);
+                return reject(error);
             } else {
-                resolve();
+                return resolve();
             }
         })
     })
@@ -34,16 +36,14 @@ const showUserForReg = () => {
         connection.query('SELECT nickname,username FROM users_pspt', (error, results) => {
             if (error) {
                 reject(error);
-            } else if ( results ) {
-                reject( results );
             } else {
-                resolve();
+                resolve( results );
             }
         })
     })
 }
 
-export default {
+module.exports = {
     createUser,
     showUserForReg
 };

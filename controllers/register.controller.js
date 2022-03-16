@@ -1,6 +1,8 @@
+let express = require('express');
+let router = express.Router();
 const session = require('express-session');
 const crypto = require('crypto');
-import usersModel from '../models/users.model';
+let usersModel = require('../models/users.model');
 
 router.use(session({
     secret: 'secret',
@@ -24,26 +26,41 @@ const regGet = ( req, res ) => {
 }
 
 const regPost = ( req, res ) => {
-    const values = req.body;
     let isFill = Object.values(req.body).every( e => e!== "");  // test if all fields are not empty
     let salt = crypto.randomBytes(16).toString('base64');
 
     usersModel.showUserForReg()
         .then(( results ) => {  // nickname/password not used.
+            console.log('line 36');
             if ( isFill ) {
-                if ( req.body.password !== req.body.password_re ) {
+                for (let i=0; i<results.length; i++) {
+                    if (req.body.nickname == results[i]['nickname']) {  // err case 1: all filled but nickname used.
+                        req.session.errMsg = 'Nickname used.';
+                        break;
+                    } else if ( req.body.username == results[i]['username']) { // err case 2: all filled but username used.
+                        req.session.errMsg = 'Username used.';
+                        break;
+                    }
+                }
+                // err case 3: password unmatched
+                if ( !req.session.errMsg && ( req.body.password !== req.body.password_re ) ) {
                     req.session.errMsg = 'Password unmatched.';
+                    res.redirect('/register');
+                } 
+                if ( req.session.errMsg) {
                     res.redirect('/register');
                 } else {  // successful case: all input OK
                     crypto.pbkdf2( req.body.password, salt, 310000, 32, 'sha256', function (error, hashedPassword) {
-                        if (error) { throw error; }
+                        if (error) {
+                            throw error;
+                        }
                         usersModel.createUser( req.body, hashedPassword.toString('base64'), salt)
-                            .then((results) => {
+                            .then(() => {
                                 req.session.sucMsg = 'Registration successes!';
                                 res.redirect('/register');
                             })
                             .catch((err)=>{
-                                throw err;
+                                return res.send(JSON.stringify(err));
                             })
                     })
                 }
@@ -54,7 +71,7 @@ const regPost = ( req, res ) => {
         })
         .catch(( err ) => {  // error or nickname/username used.
             if ( typeof err !== Array ) {
-                throw err;
+                return res.send(err);
             } else {
                 if ( req.body.nickname == err[0]['nickname'] ) {
                     req.session.errMsg = 'Nickname used.';
@@ -67,7 +84,7 @@ const regPost = ( req, res ) => {
         })
 }
 
-export default {
+module.exports = {
     regGet,
     regPost
 };
