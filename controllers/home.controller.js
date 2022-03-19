@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 let methodOverride = require('method-override');
 let cmModel = require('../models/comments.model');
+let usersModel = require('../models/users.model');
 
 router.use(methodOverride('_method'));
 
@@ -14,14 +15,14 @@ const homeAdminGet = ( req, res ) => {
                 let cmPerPage = 5;
                 let totalPage = Math.ceil( results.length / cmPerPage);
                 if ( !req.query.page ) {
-                    res.redirect('/home/admin?page=1');
+                    return res.redirect('/home/admin?page=1');
                 } else {
                     if ( totalPage !== 0 && ( req.query.page < 1 || req.query.page > totalPage ) ) {
-                        res.redirect('/home/admin?page=1');
+                        return res.redirect('/home/admin?page=1');
                     } else {
                         req.session.errMsg = undefined;
                         req.session.sucMsg = undefined;
-                        res.render('index', {
+                        return res.render('index', {
                             nickname: req.session.nickname,
                             results: results,
                             errMsg: errMsg,
@@ -34,11 +35,10 @@ const homeAdminGet = ( req, res ) => {
                 }
             })
             .catch((error) => {
-                console.log(error);
-                res.send(error);
+                return res.send(error);
             })
     } else {
-        res.redirect('/');
+        return res.redirect('/');
     }
 }
 
@@ -53,15 +53,14 @@ const homeGet = ( req, res ) => {
                 let cmPerPage = 5;
                 let totalPage = Math.ceil( results.length / cmPerPage);
                 if ( !req.query.page ) {
-                    res.redirect('/home?page=1');
+                    return res.redirect('/home?page=1');
                 } else {
                     if ( totalPage !== 0 && ( req.query.page < 1 || req.query.page > totalPage ) ) {
-                        res.redirect('/home?page=1');
+                        return res.redirect('/home?page=1');
                     } else {
-                        console.log('54');
                         req.session.errMsg = undefined;
                         req.session.sucMsg = undefined;
-                        res.render('index', {
+                        return res.render('index', {
                             nickname: req.session.nickname,
                             results: results,
                             errMsg: errMsg,
@@ -74,12 +73,10 @@ const homeGet = ( req, res ) => {
                 }
             })
             .catch((error) => {
-                console.log('73');
-                console.log(error);
-                res.send(error);
+                return res.send(error);
             })
     } else {
-        res.redirect('/');
+        return res.redirect('/');
     }
 }
 
@@ -88,17 +85,17 @@ const editCmGet = ( req, res ) => {
         .then ((results) => {
             if ( req.session.loggedin ) {
                 if ( req.session.username == results[0]['username'] || req.session.username == 'admin') {
-                    res.render('edit', {
+                    return res.render('edit', {
                         id: req.params['cmId'],
                         content: results[0]['content'],
                         errMsg: req.session.errMsg
                     })
                 } else {
                     req.session.errMsg = 'Unauthorized edit.';
-                    res.redirect('/home');
+                    return res.redirect('/home');
                 }
             } else {
-                res.redirect('/');
+                return res.redirect('/');
             }
 
         })
@@ -112,9 +109,9 @@ const editCmPut = ( req, res ) => {
         .then ((results) => {
             if (req.session.loggedin) {
                 req.session.sucMsg = 'Edit successes.';
-                res.redirect('/home');
+                return res.redirect('/home');
             } else {
-                res.redirect('/');
+                return res.redirect('/');
             }
         })
         .catch ((error) => {
@@ -127,9 +124,9 @@ const cmDel = ( req, res ) => {
         .then ((results) => {
             if ( req.session.loggedin ) {
                 req.session.sucMsg = 'Delete successes.';
-                res.redirect('/home');
+                return res.redirect('/home');
             } else {
-                res.redirect('/');
+                return res.redirect('/');
             }
         })
         .catch ((error) => {
@@ -139,13 +136,11 @@ const cmDel = ( req, res ) => {
 
 const nickPut = ( req, res ) => {
     if ( req.session.loggedin ) {
-        cmModel.editNick ( req.body.new_nickname, req.session.username )
-            .then ((results) => {
-                console.log('144');
+        usersModel.editNick ( req.body.new_nickname, req.session.username )
+            .then (() => {
                 req.session.sucMsg = 'Nickname changed.';
                 req.session.nickname = req.body.new_nickname;
-                res.redirect('/');
-                // res.redirect('/home?page=1');
+                return res.redirect('/home');
             })
             .catch ((error) => {
                 return res.send(error);
@@ -161,9 +156,9 @@ const cmUnhide = ( req, res ) => {
         .then ((results) => {
             if (req.session.loggedin) {
                 req.session.sucMsg = 'Comment is unhidden.';
-                res.redirect('/home');
+                return res.redirect('/home');
             } else {
-                res.redirect('/');
+                return res.redirect('/');
             }
         })
         .catch ((error) => {

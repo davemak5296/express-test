@@ -63,8 +63,29 @@ const showUserForLogin = ( username ) => {
     })
 }
 
+const editNick = ( newNick, username) => {
+    return new Promise ((resolve, reject) => {
+        connection.query(
+            {
+                sql:'UPDATE users_pspt SET nickname = ? WHERE username = ?',
+                values:[ newNick, username ]
+            },
+            (error, results) => {
+                if ( error ) {
+                    console.log('error!!!!');
+                    return reject(error);
+                } else {
+                    console.log('ok!!');
+                    return resolve();
+                }
+            }
+        )
+    })
+}
+
 module.exports = {
     createUser,
     showUserForReg,
-    showUserForLogin
+    showUserForLogin,
+    editNick
 };

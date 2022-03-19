@@ -14,11 +14,11 @@ const regGet = ( req, res ) => {
     let errMsg = ( !req.session.errMsg ) ? undefined : req.session.errMsg;
     let sucMsg = ( !req.session.sucMsg ) ? undefined : req.session.sucMsg;
     if ( !errMsg && !sucMsg){
-        res.render('register');
+        return res.render('register');
     } else {
         req.session.errMsg = undefined;
         req.session.sucMsg = undefined;
-        res.render('register', {
+        return res.render('register', {
             errMsg: errMsg,
             sucMsg: sucMsg
         })
@@ -45,10 +45,10 @@ const regPost = ( req, res ) => {
                 // err case 3: password unmatched
                 if ( !req.session.errMsg && ( req.body.password !== req.body.password_re ) ) {
                     req.session.errMsg = 'Password unmatched.';
-                    res.redirect('/register');
+                    return res.redirect('/register');
                 } 
                 if ( req.session.errMsg) {
-                    res.redirect('/register');
+                    return res.redirect('/register');
                 } else {  // successful case: all input OK
                     crypto.pbkdf2( req.body.password, salt, 310000, 32, 'sha256', function (error, hashedPassword) {
                         if (error) {
@@ -57,7 +57,7 @@ const regPost = ( req, res ) => {
                         usersModel.createUser( req.body, hashedPassword.toString('base64'), salt)
                             .then(() => {
                                 req.session.sucMsg = 'Registration successes!';
-                                res.redirect('/register');
+                                return res.redirect('/register');
                             })
                             .catch((err)=>{
                                 return res.send(JSON.stringify(err));
@@ -66,7 +66,7 @@ const regPost = ( req, res ) => {
                 }
             } else {
                 req.session.errMsg = 'Please fill in all fields.';
-                res.redirect('/register');
+                return res.redirect('/register');
             }
         })
         .catch(( err ) => {  // error or nickname/username used.
@@ -75,10 +75,10 @@ const regPost = ( req, res ) => {
             } else {
                 if ( req.body.nickname == err[0]['nickname'] ) {
                     req.session.errMsg = 'Nickname used.';
-                    res.redirect('/register');
+                    return res.redirect('/register');
                 } else if ( req.body.username == err[0]['username'] ) {
                     req.session.errMsg = 'Username used.';
-                    res.redirect('/register');
+                    return res.redirect('/register');
                 }
             }
         })
